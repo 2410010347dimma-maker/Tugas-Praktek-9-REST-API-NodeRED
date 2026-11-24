@@ -1,0 +1,25 @@
+[
+    {
+        "id": "proc_kontrol",
+        "type": "function",
+        "z": "flow_api",
+        "name": "Validasi & Publish",
+        "func": "var body = msg.payload;\nif (typeof body === 'string') {\n    body = JSON.parse(body);\n}\nif (!body.device || !body.action) {\n    msg.statusCode = 400;\n    msg.payload = {status: 'error', message: 'device dan action wajib diisi'};\n    msg.headers = {'Access-Control-Allow-Origin': '*'};\n    return [msg, null];\n}\n\n// Publish perintah ke MQTT\nvar mqttMsg = {payload: body, topic: 'iot/kontrol'};\nreturn [Object.assign(msg, {\n    statusCode: 200,\n    payload: {status: 'success', message: 'Perintah terkirim', sent: body},\n    headers: {'Access-Control-Allow-Origin': '*'}\n}), mqttMsg];",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 360,
+        "wires": [
+            [
+                "http_resp_kontrol"
+            ],
+            [
+                "mqtt_publish_kontrol"
+            ]
+        ]
+    }
+]
